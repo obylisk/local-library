@@ -2,7 +2,7 @@
   "name": "local-library",
   "version": "0.0.0",
   "engines": {
-  "node": "v12.16.1"
+    "node": "v12.16.1"
   },
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
+    "mongoose": "^5.9.7",
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11"
   },
