@@ -1,3 +1,5 @@
+
+car moment = require("moment");
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
@@ -16,6 +18,12 @@ BookInstanceSchema
 .virtual('url')
 .get(function () {
   return '/catalog/bookinstance/' + this._id;
+});
+
+BookInstanceSchema
+.virtual("due_back_formatted")
+.get(function () {
+  return moment(this.due_back).format("MMMM Do, YYYY");
 });
 
 //Export model
