@@ -1,3 +1,5 @@
+
+var moment = require("moment");
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
@@ -15,6 +17,7 @@ var AuthorSchema = new Schema(
 AuthorSchema
 .virtual('name')
 .get(function () {
+
 
 // To avoid errors in cases where an author does not have either a family name or first name
 // We want to make sure we handle the exception by returning an empty string for that case
@@ -35,6 +38,14 @@ AuthorSchema
 .virtual('lifespan')
 .get(function () {
   return (this.date_of_death.getYear() - this.date_of_birth.getYear()).toString();
+});
+
+AuthorSchema.virtual('date_of_birth_yyyy_mm_dd').get(function() {
+  return this.date_of_birth ? moment(this.date_of_birth).format('YYYY-MM-DD') : '';
+});
+
+AuthorSchema.virtual('date_of_death_yyyy_mm_dd').get(function() {
+  return this.date_of_death ? moment(this.date_of_death).format('YYYY-MM-DD') : '';
 });
 
 // Virtual for author's URL
