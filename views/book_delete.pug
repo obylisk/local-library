@@ -3,12 +3,33 @@ extends layout
 block content
   h1 #{title}: #{book.title}
   
-  p #[strong Do you really want to delete all instances of this book?]
-
-  div(style='margin-left:20px;margin-top:20px')
+  
+  if book_instances.length
+    p #[strong Which instances would you like to delete?]
+    each val in book_instances
+          hr
+          if val.status=='Available'
+            p.text-success #{val.status}
+          else if val.status=='Maintenance'
+            p.text-danger #{val.status}
+          else
+            p.text-warning #{val.status} 
+          p #[strong Imprint:] #{val.imprint}
+          if val.status!='Available'
+            p #[strong Due back:] #{val.due_back_formatted}
+          p #[strong Id:]&nbsp;
+            a(href=val.url) #{val._id}
+            
+            form(method='POST' action='')
+              div.form-group
+                input#val.form-control(type='hidden',name='bookinstanceid', required='true', value=val._id )
+          
+                button.btn.btn-primary(type='submit') Delete 
+  else 
+    p #[strong Would you like to delete this book from the record?]
     
-  form(method='POST' action='')
-    div.form-group
-      input#BookInstanceid.form-control(type='hidden',name='BookInstanceid', required='true', value=BookInstance._id )
-      
-  button.btn.btn-primary(type='submit') Delete   
+    form(method='POST' action='')
+      div.form-group
+        input#book.form-control(type='hidden',name='bookid', required='true', value=book._id )
+  
+        button.btn.btn-primary(type='submit') Delete
