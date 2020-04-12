@@ -3,15 +3,12 @@ extends layout
 block content
   h1 #{title}: #{book.title}
   
+  p #[strong Do you really want to delete all instances of this book?]
 
-  
-  if book_instances.length
-  
-    p #[strong Do you really want to delete this all instances of this book?]
-  
-    div(style='margin-left:20px;margin-top:20px')
+  div(style='margin-left:20px;margin-top:20px')
+    
+  form(method='POST' action='')
+    div.form-group
+      input#BookInstanceid.form-control(type='hidden',name='BookInstanceid', required='true', value=BookInstance._id )
       
-    form(method='POST' action='')
-      div.form-group
-        input#bookid.form-control(type='hidden',name='bookid', required='true', value=book._id )
-    button.btn.btn-primary(type='submit') Delete   
+  button.btn.btn-primary(type='submit') Delete   
