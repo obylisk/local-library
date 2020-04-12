@@ -2,6 +2,7 @@
 const { body,validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 var BookInstance = require('../models/bookinstance');
+var async = require('async');
 var Book = require('../models/book');
 
 // Display list of all BookInstances.
@@ -112,14 +113,38 @@ exports.bookinstance_delete_get = function(req, res, next) {
             res.redirect('/catalog/bookinstances');
         }
         // Successful, so render.
-        res.render('bookinstance_delete', { title: 'Delete BookInstance', bookinstance: results.bookinstance, author_books: results.book_instances } );
+        res.render('bookinstance_delete', { title: 'Delete Book Instance', bookinstance: results.bookinstance, book_instances: results.book_instances } );
     });
 
 };
 
 // Handle BookInstance delete on POST.
-exports.bookinstance_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance delete POST');
+exports.bookinstance_delete_post = function(req, res, next) {
+
+    async.parallel({
+        bookinstance: function(callback) {
+          BookInstance.findById(req.body.bookinstanceid).exec(callback)
+        },
+        book_instances: function(callback) {
+          Book.find({ 'bookinstance': req.body.bookinstanceid }).exec(callback)
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        // Success
+        if (results.book_instances.length > 0) {
+            // BookInstance has book instances. Render in same way as for GET route.
+            res.render('bookinstance_delete', { title: 'Delete BookInstance', bookinstance: results.bookinstance, book_instances: results.book_instances } );
+            return;
+        }
+        else {
+            // LIKELY REDUNDANT Book instances has no book instances. Delete object and redirect to the list of book isntances.
+            BookInstance.findByIdAndRemove(req.body.bookinstanceid, function deleteBookInstance(err) {
+                if (err) { return next(err); }
+                // Success - go to bookinstance list
+                res.redirect('/catalog/bookinstances')
+            })
+        }
+    });
 };
 
 // Display BookInstance update form on GET.
