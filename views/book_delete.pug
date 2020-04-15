@@ -3,15 +3,15 @@ extends layout
 block content
   h1 #{title}: #{book.title}
   
-
   
-  if book_instances.length
-  
+<<<<<<< HEAD
     p #[strong Do you really want to delete all instances of this book?]
+=======
+  p #[strong Would you like to delete this book from the record?]
+>>>>>>> DeleteBook
   
-    div(style='margin-left:20px;margin-top:20px')
-      
-    form(method='POST' action='')
-      div.form-group
-        input#bookid.form-control(type='hidden',name='bookid', required='true', value=book._id )
-    button.btn.btn-primary(type='submit') Delete   
+  form(method='POST' action='')
+    div.form-group
+      input#book.form-control(type='hidden',name='bookid', required='true', value=book._id )
+
+      button.btn.btn-primary(type='submit') Delete
