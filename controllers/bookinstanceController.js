@@ -169,15 +169,6 @@ exports.bookinstance_update_get = function(req, res, next) {
                 return next(err);
             }
             // Success.
-            // Mark our selected genres as checked.
-            for (var all_g_iter = 0; all_g_iter < results.genres.length; all_g_iter++) {
-                for (var bookinstance_g_iter = 0; bookinstance_g_iter < results.bookinstance.genre.length; bookinstance_g_iter++) {
-                  //MIGHT BE REDUDANT
-                    if (results.genres[all_g_iter]._id.toString()==results.bookinstance.genre[bookinstance_g_iter]._id.toString()) {
-                        results.genres[all_g_iter].checked='true';
-                    }
-                }
-            }
             res.render('bookinstance_form', { title: 'Update Book Instance', status: results.status, due_back: results.due_back, bookinstance: results.bookinstance });
         });
 
