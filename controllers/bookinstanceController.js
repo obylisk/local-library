@@ -148,8 +148,39 @@ exports.bookinstance_delete_post = function(req, res, next) {
 };
 
 // Display BookInstance update form on GET.
-exports.bookinstance_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance update GET');
+exports.bookinstance_update_get = function(req, res, next) {
+
+    // Get book, imprint, status and due_back for form.
+    async.parallel({
+        bookinstance: function(callback) {
+            BookInstance.findById(req.params.id).populate('status').populate('due_back').exec(callback);
+        },
+        status: function(callback) {
+            Status.find(callback);
+        },
+        due_back: function(callback) {
+            Due_back.find(callback);
+        },
+        }, function(err, results) {
+            if (err) { return next(err); }
+            if (results.bookinstance==null) { // No results.
+                var err = new Error('Book Instance not found');
+                err.status = 404;
+                return next(err);
+            }
+            // Success.
+            // Mark our selected genres as checked.
+            for (var all_g_iter = 0; all_g_iter < results.genres.length; all_g_iter++) {
+                for (var bookinstance_g_iter = 0; bookinstance_g_iter < results.bookinstance.genre.length; bookinstance_g_iter++) {
+                  //MIGHT BE REDUDANT
+                    if (results.genres[all_g_iter]._id.toString()==results.bookinstance.genre[bookinstance_g_iter]._id.toString()) {
+                        results.genres[all_g_iter].checked='true';
+                    }
+                }
+            }
+            res.render('bookinstance_form', { title: 'Update Book Instance', status: results.status, due_back: results.due_back, bookinstance: results.bookinstance });
+        });
+
 };
 
 // Handle bookinstance update on POST.
