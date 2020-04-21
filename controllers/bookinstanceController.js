@@ -150,17 +150,15 @@ exports.bookinstance_delete_post = function(req, res, next) {
 // Display BookInstance update form on GET.
 exports.bookinstance_update_get = function(req, res, next) {
 
-    // Get book, imprint, status and due_back for form.
+    // Get info to populate form.
     async.parallel({
         bookinstance: function(callback) {
-            BookInstance.findById(req.params.id).populate('status').populate('due_back').exec(callback);
+            BookInstance.findById(req.params.id).populate('book').exec(callback);
         },
-        status: function(callback) {
-            Status.find(callback);
+        books: function(callback) {
+            Book.find(callback);
         },
-        due_back: function(callback) {
-            Due_back.find(callback);
-        },
+
         }, function(err, results) {
             if (err) { return next(err); }
             if (results.bookinstance==null) { // No results.
@@ -169,7 +167,8 @@ exports.bookinstance_update_get = function(req, res, next) {
                 return next(err);
             }
             // Success.
-            res.render('bookinstance_form', { title: 'Update Book Instance', status: results.status, due_back: results.due_back, bookinstance: results.bookinstance });
+
+            res.render('bookinstance_form', { title: 'Update Book Instance', book_list: results.books, selected_book: results.bookinstance.book_id, bookinstance: results.bookinstance });
         });
 
 };
