@@ -173,16 +173,18 @@ exports.bookinstance_update_get = function(req, res, next) {
 };
 
 // Handle bookinstance update on POST.
-exports.bookinstance_update_post = (req, res, next) => {
-  // Validate fields.
-  body('imprint', 'Imprint must not be empty.').trim().isLength({ min: 1 }),
+exports.bookinstance_update_post = [
 
+  // Validate fields.
+  body('book', 'Book must be specified').isLength({ min: 1 }).trim(),
+  body('imprint', 'Imprint must be specified').isLength({ min: 1 }).trim(),
+  body('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
 
   // Sanitize fields.
-  sanitizeBody('title').escape(),
+  sanitizeBody('book').escape(),
   sanitizeBody('imprint').escape(),
-  sanitizeBody('due_date').escape(),
   sanitizeBody('status').escape(),
+  sanitizeBody('due_back').toDate(),
 
   // Process request after validation and sanitization.
   (req, res, next) => {
@@ -191,11 +193,12 @@ exports.bookinstance_update_post = (req, res, next) => {
       const errors = validationResult(req);
 
       // Create a Book Instance object with escaped/trimmed data and old id.
-      var bookinstancce = new BookInstance(
-        { title: req.body.title,
+      var bookinstance = new BookInstance(
+        { book: req.body.book,
           imprint: req.body.imprint,
-          due_date: req.body.due_date,
           status: req.body.status,
+          due_back: req.body.due_back,
+          _id: req.params.id
          });
 
       if (!errors.isEmpty()) {
@@ -215,13 +218,11 @@ exports.bookinstance_update_post = (req, res, next) => {
     }
     else {
         // Data from form is valid. Update the record.
-        BookInstance.findByIdAndUpdate(req.params.id, bookinstnace, {}, function (err,thebookinstance) {
+        BookInstance.findByIdAndUpdate(req.params.id, bookinstance, {}, function (err,thebookinstance) {
             if (err) { return next(err); }
                // Successful - redirect to book instance detail page.
                res.redirect(thebookinstance.url);
-            });
+      });
     }
-}
-
-
-};
+  }
+];
