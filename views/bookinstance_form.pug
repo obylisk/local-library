@@ -5,15 +5,11 @@ block content
 
   form(method='POST' action='')
     div.form-group
-      if !bookinstance
-        label(for='bookinstance') Title:
-        select#bookinstance.form-control(type='select' placeholder='Select book instance' name='Title' required='true')
-          - book_list.sort(function(a, b) {let textA = a.title.toUpperCase(); let textB = b.title.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
-          for book in book_list
-            option(value=book._id, selected=(selected_book==book._id.toString() ? 'selected' : false) ) #{book.title}
-      else
-        label(for='title') Title:
-        input#title.form-control(type='text', placeholder='Name of book' name='title' required='true' value=bookinstance.book.title )
+      label(for='book') Book:
+      select#book.form-control(type='select', placeholder='Select book' name='book' required='true' )
+        - book_list.sort(function(a, b) {let textA = a.title.toUpperCase(); let textB = b.title.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for book in book_list
+          option(value=book._id, selected=(selected_book==book._id.toString() ? 'selected' : false) ) #{book.title}
         
     div.form-group
       label(for='imprint') Imprint:
