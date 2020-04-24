@@ -13,6 +13,7 @@ block content
         dt 
           a(href=book.url) #{book.title}
         dd #{book.summary}
+        hr
 
       else
         p This genre has no books
@@ -20,5 +21,6 @@ block content
         hr
         p
           a(href=genre.url+'/delete') Delete Genre
-        p
-          a(href=genre.url+'/update') Update Genre
+      
+      p
+        a(href=genre.url+'/update') Update Genre
