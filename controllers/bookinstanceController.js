@@ -1,9 +1,11 @@
 
+
+var BookInstance = require('../models/bookinstance');
+var Book = require('../models/book');
+var async = require('async');
+
 const { body,validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
-var BookInstance = require('../models/bookinstance');
-var async = require('async');
-var Book = require('../models/book');
 
 // Display list of all BookInstances.
 exports.bookinstance_list = function(req, res, next) {
@@ -133,7 +135,7 @@ exports.bookinstance_delete_post = function(req, res, next) {
         // Success
         if (results.book_instances.length > 0) {
             // BookInstance has book instances. Render in same way as for GET route.
-            res.render('bookinstance_delete', { title: 'Delete BookInstance', bookinstance: results.bookinstance, book_instances: results.book_instances } );
+            res.render('bookinstance_delete', { title: 'Delete Book Instance', bookinstance: results.bookinstance, book_instances: results.book_instances } );
             return;
         }
         else {
