@@ -4,6 +4,9 @@ var Genre = require('../models/genre');
 var Book = require('../models/book');
 var async = require("async");
 
+const { body,validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
+
 // Display list of all Genre.
 exports.genre_list = function(req, res, next) {
   Genre.find()
@@ -165,38 +168,45 @@ exports.genre_update_get = function(req, res, next) {
     });
   });
 
-}
+};
 
 
 // Handle Genre update on POST.
 exports.genre_update_post = [
-  //Validate field
-  body('genre', 'Genre must not be empty.').trim().isLength({min: 1 }),
 
-  //Sanitize fields
-  sanitizeBody('genre').escape(),
+    // Validate that the name field is not empty.
+    body('name', 'Genre name required').isLength({ min: 1 }).trim(),
 
-  //Process request after validation and sanitization.
-  (req, res, next) => {
+    // Sanitize (escape) the name field.
+    sanitizeBody('name').escape(),
 
-    //Extract the validation errors from a request.
-    const errors = validationResult(req);
+    // Process request after validation and sanitization.
+    (req, res, next) => {
 
-    //Create Genre object with escaped and trimmed data and the old  ID
-    var genre = new Genre(
-      { genre: req.body.genre, _id: req.params.id
-      });
+        // Extract the validation errors from a request .
+        const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      //There are errors. Render form again with sanitized values/errr messages.
-      res.render('genre_form', { title: 'Update Genre', genre: genre, errors: errors.array() });
-    } else {
-      // Data from form is valid. Update the record.
-      Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err, thegenre) {
-        if (err) { return next(err); }
-        //Succeful - redirect to genre detail page.
-        res.redirect(thegenre.url);
-      });
+    // Create a genre object with escaped and trimmed data (and the old id!)
+        var genre = new Genre(
+          {
+          name: req.body.name,
+          _id: req.params.id
+          }
+        );
+
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render the form again with sanitized values and error messages.
+            res.render('genre_form', { title: 'Update Genre', genre: genre, errors: errors.array()});
+        return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err,thegenre) {
+                if (err) { return next(err); }
+                   // Successful - redirect to genre detail page.
+                   res.redirect(thegenre.url);
+                });
+        }
     }
-  }
 ];
