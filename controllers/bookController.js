@@ -104,16 +104,17 @@ exports.book_create_post = [
     },
 
     // Validate fields.
-    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
-    body('author', 'Author must not be empty.').trim().isLength({ min: 1 }),
-    body('summary', 'Summary must not be empty.').trim().isLength({ min: 1 }),
-    body('isbn', 'ISBN must not be empty').trim().isLength({ min: 1 }),
+    body('title', 'Title must not be empty.').isLength({ min: 1 }).trim(),
+    body('author', 'Author must not be empty.').isLength({ min: 1 }).trim(),
+    body('summary', 'Summary must not be empty.').isLength({ min: 1 }).trim(),
+    body('isbn', 'ISBN must not be empty').isLength({ min: 1 }).trim(),
 
-    // Sanitize fields (using wildcard).
+    // Sanitize fields.
     sanitizeBody('*').escape(),
-
+    sanitizeBody('genre.*').escape(),
     // Process request after validation and sanitization.
     (req, res, next) => {
+
 
         // Extract the validation errors from a request.
         const errors = validationResult(req);
@@ -155,7 +156,7 @@ exports.book_create_post = [
             // Data from form is valid. Save book.
             book.save(function (err) {
                 if (err) { return next(err); }
-                   //successful - redirect to new book record.
+                   // Successful - redirect to new book record.
                    res.redirect(book.url);
                 });
         }
