@@ -33,13 +33,13 @@ block content
               p #[strong Id:] 
                 a(href=book_copy.url) #{book_copy._id}
 
-            else
+      else
 
-              p #[strong Do you really want to delete this book?]
+        p #[strong Do you really want to delete this book?]
 
-              
-              form(method='POST' action='')
-                div.form-group
-                  input#book.form-control(type='hidden',name='bookid', required='true', value=book._id )
+        
+        form(method='POST' action='')
+          div.form-group
+            input#book.form-control(type='hidden',name='bookid', required='true', value=book._id )
 
-                  button.btn.btn-primary(type='submit') Delete
+            button.btn.btn-primary(type='submit') Delete
