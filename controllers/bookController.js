@@ -11,20 +11,20 @@ exports.index = function(req, res) {
 
     async.parallel({
         book_count: function(callback) {
-            Book.countDocuments({}, callback); // Pass an empty object as match condition to find all documents of this collection
+            Book.count(callback);
         },
         book_instance_count: function(callback) {
-            BookInstance.countDocuments({}, callback);
+            BookInstance.count(callback);
         },
         book_instance_available_count: function(callback) {
-            BookInstance.countDocuments({status:'Available'}, callback);
+            BookInstance.count({status:'Available'},callback);
         },
         author_count: function(callback) {
-            Author.countDocuments({}, callback);
+            Author.count(callback);
         },
         genre_count: function(callback) {
-            Genre.countDocuments({}, callback);
-        }
+            Genre.count(callback);
+        },
     }, function(err, results) {
         res.render('index', { title: 'Local Library Home', error: err, data: results });
     });
@@ -168,10 +168,10 @@ exports.book_delete_get = function(req, res, next) {
 
     async.parallel({
         book: function(callback) {
-            Book.findById(req.params.id).exec(callback)
+            Book.findById(req.params.id).populate('author').populate('genre').exec(callback);
         },
-        book_instances: function(callback) {
-          BookInstance.find({ 'book': req.params.id }).exec(callback)
+        book_bookinstances: function(callback) {
+          BookInstance.find({ 'book': req.params.id }).exec(callback);
         },
     }, function(err, results) {
         if (err) { return next(err); }
@@ -189,10 +189,10 @@ exports.book_delete_post = function(req, res, next) {
 
     async.parallel({
         book: function(callback) {
-          Book.findById(req.body.bookid).exec(callback)
+          Book.findById(req.body.id).populate('author').populate('genre').exec(callback);
         },
-        book_instances: function(callback) {
-          Book.find({ 'book': req.body.bookid }).exec(callback)
+        book_bookinstances: function(callback) {
+          Book.find({ 'book': req.body.id }).exec(callback);
         },
     }, function(err, results) {
         if (err) { return next(err); }
