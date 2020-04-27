@@ -33,6 +33,7 @@ block content
     div.form-group
       label Genre:
       div
+        - genres.sort(function(a, b) {let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
         for genre in genres
           div(style='display: inline; padding-right:10px;')
             input.checkbox-input(type='checkbox', name='genre', id=genre._id, value=genre._id, checked=genre.checked )
