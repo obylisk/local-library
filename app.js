@@ -9,8 +9,11 @@ var usersRouter = require('./routes/users');
 //Import routes for "catalog" area of site
 var catalogRouter = require('./routes/catalog');
 var compression = require('compression');
+var helmet = require('helmet');
 
 var app = express();
+
+app.use(helmet());
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
