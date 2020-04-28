@@ -7,9 +7,10 @@ block content
   p #[strong Summary:] #{book.summary}
   p #[strong ISBN:] #{book.isbn}
   p #[strong Genre:] 
-    each val in book.genre
+    each val, index in book.genre
       a(href=val.url) #{val.name}
-      |, 
+      if index < book.genre.length - 1
+        |, 
 
 
     p #[strong Do you really want to delete this book?]
